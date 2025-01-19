@@ -12,21 +12,26 @@ pipeline {
         
         stage('Install') {
             steps {
-                // Install Node dependencies
-                bat 'npm install'
+                // Navigate to subdirectory and install Node dependencies
+                dir('basic-react-app-master') {
+                    bat 'npm install'
+                }
             }
         }
         
         stage('Lint') {
             steps {
-                script {
-                    try {
-                        bat 'npm run lint'
-                    } catch (err) {
-                        // Don't fail the build, but mark it as unstable
-                        unstable(message: "Linting issues found")
-                        // Continue with the build
-                        echo "Lint issues found, but continuing with build..."
+                // Navigate to subdirectory and run linting
+                dir('basic-react-app-master') {
+                    script {
+                        try {
+                            bat 'npm run lint'
+                        } catch (err) {
+                            // Don't fail the build, but mark it as unstable
+                            unstable(message: "Linting issues found")
+                            // Continue with the build
+                            echo "Lint issues found, but continuing with build..."
+                        }
                     }
                 }
             }
@@ -34,14 +39,16 @@ pipeline {
         
         stage('Build') {
             steps {
-                // Create production build
-                bat 'npm run build'
+                // Navigate to subdirectory and create production build
+                dir('basic-react-app-master') {
+                    bat 'npm run build'
+                }
             }
         }
         
         stage('Deploy') {
             steps {
-                echo "deploy success"
+                echo "Deploy successful!"
             }
         }
     }
